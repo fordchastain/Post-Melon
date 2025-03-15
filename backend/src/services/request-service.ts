@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { Axios, AxiosHeaders, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { RequestEntity } from '../entities/request-entity.js';
 import { RequestRepository } from '../db/request-repository.js';
 import { encrypt, decrypt } from './encryption-service.js';
@@ -17,30 +17,22 @@ export const RequestService = {
         data: request.body,
       });
 
-      let responseData = axiosResponse.data;
-
-      if (request.encrypted) {
-        responseData = encrypt(JSON.stringify(responseData));
-      }
-
-      return {
-        status: axiosResponse.status,
-        headers: axiosResponse.headers,
-        data: responseData,
-      };
+      return this.finalizeRequestWithResponse(request, axiosResponse);
     } catch (error: any) {
-      if (error.response) {
-        let responseData = error.response.data;
-
-        if (request.encrypted) {
-          responseData = encrypt(JSON.stringify(responseData));
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          return this.finalizeRequestWithResponse(request, error.response);
         }
 
-        return {
-          status: responseData.status,
-          headers: responseData.headers,
-          data: responseData,
+        const fallbackResponse: AxiosResponse = {
+          data: {error: error.message },
+          status: -1,
+          headers: {},
+          statusText: 'No Response',
+          config: { headers: {} as AxiosRequestHeaders }
         };
+
+        return this.finalizeRequestWithResponse(request, fallbackResponse);
       } else {
         console.log('Unexpected error', error.message);
         throw new Error(error.message);
@@ -79,4 +71,47 @@ export const RequestService = {
   async updateRequest(request: RequestEntity) {
     await requestRepo.updateRequest(request);
   },
+
+  parseAxiosHeaders(headers: any): Record<string, string> {
+    if (!headers) {
+      return {};
+    }
+
+    if (typeof headers.toJSON === 'function') {
+      return headers.toJSON();
+    }
+
+    const normalized: Record<string, string> = {};
+
+    for (const key in headers) {
+      if (Object.prototype.hasOwnProperty.call(headers, key)) {
+        const value = headers[key];
+
+        if (Array.isArray(value)) {
+          normalized[key] = value.join(', ');
+        } else if (typeof value === 'undefined') {
+          normalized[key] = '';
+        } else {
+          normalized[key] = String(value);
+        }
+      }
+    }
+
+    return normalized;
+  },
+
+  finalizeRequestWithResponse(request: RequestEntity, response: AxiosResponse) {
+    let responseData = response.data;
+
+    if (request.encrypted) {
+      responseData = encrypt(JSON.stringify(response.data));
+    }
+
+    return {
+      ...request,
+      responseStatus: response.status,
+      responseBody: responseData,
+      responseHeaders: response.headers as Record<any, any>
+    } as RequestEntity;
+  }
 };

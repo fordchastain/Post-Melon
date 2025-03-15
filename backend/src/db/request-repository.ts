@@ -6,8 +6,8 @@ export class RequestRepository {
 
   private INSERT_REQUEST = `
     INSERT INTO request (name, method, protocol, url, headers, body, graphql_query, websocket_event, grpc_method,
-      encrypted, response_status, response_body, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      encrypted, response_status, response_body, response_headers, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   private GET_ALL_REQUESTS = `
@@ -32,6 +32,7 @@ export class RequestRepository {
         encrypted = ?,
         response_status = ?,
         response_body = ?,
+        response_headers = ?,
         created_at = ?
     WHERE id = ?
   `;
@@ -45,14 +46,17 @@ export class RequestRepository {
           request.method,
           request.protocol,
           request.url,
-          request.headers,
+          JSON.stringify(request.headers),
           request.body,
           request.graphqlQuery ?? '',
           request.websocketEvent ?? '',
           request.grpcMethod ?? '',
-          request.encrypted,
+          request.encrypted ? 1 : 0,
           request.responseStatus,
-          request.responseBody,
+          typeof request.responseBody === 'object'
+            ? JSON.stringify(request.responseBody)
+            : request.responseBody ?? '',
+          JSON.stringify(request.responseHeaders),
           request.createdAt.toISOString(),
         ],
         function (err) {

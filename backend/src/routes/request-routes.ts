@@ -8,17 +8,17 @@ requestRoutes.post('/requests', async (req: Request, res: Response) => {
   try {
     const requestData = RequestEntity.from({
       ...req.body,
-      headers: JSON.stringify(req.body.headers || {}),
+      headers:req.body.headers || {},
       protocol: req.body.protocol || 'HTTP',
       responseStatus: 0,
       createdAt: new Date(),
     });
 
-    const apiResponse = await RequestService.executeApiRequest(requestData);
+    const executedRequest = await RequestService.executeApiRequest(requestData);
 
-    await RequestService.saveApiRequest(requestData);
+    await RequestService.saveApiRequest(executedRequest);
 
-    res.status(201).json(apiResponse);
+    res.status(201).json(executedRequest);
   } catch (error: any) {
     console.error('Error executing API request:', error.message);
     res.status(500).json({ error: error.message });

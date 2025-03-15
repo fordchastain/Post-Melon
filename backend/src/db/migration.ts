@@ -21,6 +21,7 @@ export const runMigrations = async (): Promise<void> => {
           encrypted BOOLEAN NOT NULL DEFAULT 0,
           response_status INTEGER,
           response_body TEXT,
+          response_headers TEXT NOT NULL,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `,
