@@ -5,21 +5,21 @@ export class RequestRepository {
   private db = initializeDatabase();
 
   private INSERT_REQUEST = `
-    INSERT INTO requests (name, method, protocol, url, headers, body, graphql_query, websocket_event, grpc_method,
+    INSERT INTO request (name, method, protocol, url, headers, body, graphql_query, websocket_event, grpc_method,
       encrypted, response_status, response_body, created_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   private GET_ALL_REQUESTS = `
-    SELECT * FROM requests
+    SELECT * FROM request
   `;
 
   private DELETE_REQUEST = `
-    DELETE FROM requests WHERE id = ?
+    DELETE FROM request WHERE id = ?
   `;
 
   private UPDATE_REQUEST = `
-    UPDATE requests
+    UPDATE request
     SET name = ?,
         method = ?,
         protocol = ?,
@@ -47,17 +47,21 @@ export class RequestRepository {
           request.url,
           request.headers,
           request.body,
-          request.graphqlQuery,
-          request.websocketEvent,
-          request.grpcMethod,
+          request.graphqlQuery ?? '',
+          request.websocketEvent ?? '',
+          request.grpcMethod ?? '',
           request.encrypted,
           request.responseStatus,
           request.responseBody,
           request.createdAt.toISOString(),
         ],
         function (err) {
-          if (err) reject(err);
-          else resolve();
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            resolve();
+          }
         },
       );
     });

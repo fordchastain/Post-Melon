@@ -6,7 +6,8 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
   },
   "include": ["src"]
 }

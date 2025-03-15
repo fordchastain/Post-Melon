@@ -29,8 +29,22 @@ export const RequestService = {
         data: responseData,
       };
     } catch (error: any) {
-      console.error('Error executing API request:', error.message);
-      throw new Error(`Failed to execute API request: ${error.message}`);
+      if (error.response) {
+        let responseData = error.response.data;
+
+        if (request.encrypted) {
+          responseData = encrypt(JSON.stringify(responseData));
+        }
+
+        return {
+          status: responseData.status,
+          headers: responseData.headers,
+          data: responseData,
+        };
+      } else {
+        console.log('Unexpected error', error.message);
+        throw new Error(error.message);
+      }
     }
   },
 

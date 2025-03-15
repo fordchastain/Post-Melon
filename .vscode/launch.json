@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    {
+        "type": "pwa-node",
+        "request": "launch",
+        "name": "Launch Express API",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "backend/src/server.js", // <- entry point to your API
+        "env": {
+            "NODE_ENV": "development"
+        }
+    }
+  ]
+}
