@@ -1,0 +1,87 @@
+export class RequestEntity {
+  id?: number;
+  name: string = '';
+  method: string = 'GET';
+  protocol: string = 'HTTP';
+  url: string = '';
+  headers: string = '{}';
+  body: string = '';
+  graphqlQuery?: string;
+  websocketEvent?: string;
+  grpcMethod?: string;
+  encrypted: boolean = false;
+  responseStatus: number = 0;
+  responseBody?: string;
+  createdAt: Date = new Date();
+
+  constructor(params: Partial<RequestEntity>) {
+    Object.assign(this, params);
+  }
+
+  /**
+   * Static factory method to map from a DB row or plain object
+   */
+  static from(obj: any): RequestEntity {
+    return new RequestEntity({
+      id: obj.id,
+      name: obj.name,
+      method: obj.method,
+      protocol: obj.protocol,
+      url: obj.url,
+      headers: obj.headers,
+      body: obj.body,
+      graphqlQuery: obj.graphql_query ?? obj.graphqlQuery,
+      websocketEvent: obj.websocket_event ?? obj.websocketEvent,
+      grpcMethod: obj.grpc_method ?? obj.grpcMethod,
+      encrypted: obj.encrypted === 1 || obj.encrypted === true,
+      responseStatus: obj.response_status ?? obj.responseStatus,
+      responseBody: obj.response_body ?? obj.responseBody,
+      createdAt: obj.created_at
+        ? new Date(obj.created_at)
+        : obj.createdAt ?? new Date(),
+    });
+  }
+
+  /**
+   * Convert to a DB row object (snake_case for SQLite)
+   */
+  toRow(): any {
+    return {
+      name: this.name,
+      method: this.method,
+      protocol: this.protocol,
+      url: this.url,
+      headers: this.headers,
+      body: this.body,
+      graphql_query: this.graphqlQuery,
+      websocket_event: this.websocketEvent,
+      grpc_method: this.grpcMethod,
+      encrypted: this.encrypted ? 1 : 0,
+      response_status: this.responseStatus,
+      response_body: this.responseBody,
+      created_at: this.createdAt.toISOString(),
+    };
+  }
+
+  /**
+   * Convert to JSON (camelCase for APIs, etc.)
+   */
+  toJSON(): any {
+    return {
+      id: this.id,
+      name: this.name,
+      method: this.method,
+      protocol: this.protocol,
+      url: this.url,
+      headers: this.headers,
+      body: this.body,
+      graphqlQuery: this.graphqlQuery,
+      websocketEvent: this.websocketEvent,
+      grpcMethod: this.grpcMethod,
+      encrypted: this.encrypted,
+      responseStatus: this.responseStatus,
+      responseBody: this.responseBody,
+      createdAt: this.createdAt.toISOString(),
+    };
+  }
+}
