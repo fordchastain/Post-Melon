@@ -1,23 +1,19 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Ignore ALL node_modules folders (any depth)
+**/node_modules/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Ignore SQLite DB files anywhere (example: *.sqlite, or specifically what you use)
+**/*.sqlite
+**/*.db
 
-# testing
-/coverage
+# Ignore environment files (just in case)
+**/.env
 
-# production
-/build
-
-# misc
+# Ignore macOS system files
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Ignore build/output folders (optional, if you're building somewhere)
+**/dist/
+**/build/
+
+# Logs
+**/*.log
