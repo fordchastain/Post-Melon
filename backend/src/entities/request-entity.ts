@@ -34,9 +34,7 @@ export class RequestEntity {
       encrypted: obj.encrypted === 1 || obj.encrypted === true,
       responseStatus: obj.response_status ?? obj.responseStatus,
       responseBody: obj.response_body ?? obj.responseBody,
-      createdAt: obj.created_at
-        ? new Date(obj.created_at)
-        : obj.createdAt ?? new Date(),
+      createdAt: obj.created_at ? new Date(obj.created_at) : (obj.createdAt ?? new Date()),
     });
   }
 

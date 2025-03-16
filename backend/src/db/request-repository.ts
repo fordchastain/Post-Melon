@@ -20,20 +20,21 @@ export class RequestRepository {
 
   private UPDATE_REQUEST = `
     UPDATE request
-    SET name = ?,
-        method = ?,
-        protocol = ?,
-        url = ?,
-        headers = ?,
-        body = ?,
-        graphql_query = ?,
-        websocket_event = ?,
-        grpc_method = ?,
-        encrypted = ?,
-        response_status = ?,
-        response_body = ?,
-        response_headers = ?,
-        created_at = ?
+    SET 
+      name = ?,
+      method = ?,
+      protocol = ?,
+      url = ?,
+      headers = ?,
+      body = ?,
+      graphql_query = ?,
+      websocket_event = ?,
+      grpc_method = ?,
+      encrypted = ?,
+      response_status = ?,
+      response_body = ?,
+      response_headers = ?,
+      created_at = ?
     WHERE id = ?
   `;
 
@@ -55,7 +56,7 @@ export class RequestRepository {
           request.responseStatus,
           typeof request.responseBody === 'object'
             ? JSON.stringify(request.responseBody)
-            : request.responseBody ?? '',
+            : (request.responseBody ?? ''),
           JSON.stringify(request.responseHeaders),
           request.createdAt.toISOString(),
         ],
@@ -103,14 +104,17 @@ export class RequestRepository {
           request.method,
           request.protocol,
           request.url,
-          request.headers,
+          JSON.stringify(request.headers),
           request.body,
-          request.graphqlQuery,
-          request.websocketEvent,
-          request.grpcMethod,
-          request.encrypted,
+          request.graphqlQuery ?? '',
+          request.websocketEvent ?? '',
+          request.grpcMethod ?? '',
+          request.encrypted ? 1 : 0,
           request.responseStatus,
-          request.responseBody,
+          typeof request.responseBody === 'object'
+            ? JSON.stringify(request.responseBody)
+            : (request.responseBody ?? ''),
+          JSON.stringify(request.responseHeaders),
           request.createdAt.toISOString(),
           request.id,
         ],

@@ -1,57 +1,56 @@
-import axios, { Axios, AxiosHeaders, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosResponse, AxiosRequestHeaders, AxiosError, InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
+
 import { RequestEntity } from '../entities/request-entity.js';
 import { RequestRepository } from '../db/request-repository.js';
 import { encrypt, decrypt } from './encryption-service.js';
 
-const requestRepo = new RequestRepository();
+export class RequestService {
+  private requestRepo = new RequestRepository();
 
-export const RequestService = {
-  async executeApiRequest(request: RequestEntity) {
+  public async executeApiRequest(request: RequestEntity): Promise<RequestEntity> {
     try {
-      const parsedHeaders = typeof request.headers === 'string' ? JSON.parse(request.headers) : request.headers;
-
       const axiosResponse = await axios({
         method: request.method,
         url: request.url,
-        headers: parsedHeaders,
+        headers: request.headers,
         data: request.body,
       });
 
       return this.finalizeRequestWithResponse(request, axiosResponse);
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           return this.finalizeRequestWithResponse(request, error.response);
         }
 
         const fallbackResponse: AxiosResponse = {
-          data: {error: error.message },
+          data: { error: error.message },
           status: -1,
           headers: {},
           statusText: 'No Response',
-          config: { headers: {} as AxiosRequestHeaders }
+          config: { headers: {} as AxiosRequestHeaders },
         };
 
         return this.finalizeRequestWithResponse(request, fallbackResponse);
-      } else {
-        console.log('Unexpected error', error.message);
-        throw new Error(error.message);
       }
-    }
-  },
 
-  async saveApiRequest(request: RequestEntity) {
+      console.error('Unexpected error', (error as Error).message);
+      throw new Error((error as Error).message);
+    }
+  }
+
+  public async saveApiRequest(request: RequestEntity): Promise<void> {
     const clonedRequest = new RequestEntity({ ...request });
 
     if (clonedRequest.encrypted) {
       clonedRequest.body = encrypt(clonedRequest.body);
     }
 
-    await requestRepo.saveRequest(clonedRequest);
-  },
+    await this.requestRepo.saveRequest(clonedRequest);
+  }
 
-  async getSavedRequests(): Promise<RequestEntity[]> {
-    const requests = await requestRepo.getRequests();
+  public async getSavedRequests(): Promise<RequestEntity[]> {
+    const requests = await this.requestRepo.getRequests();
 
     return requests.map((req) => {
       const clonedRequest = new RequestEntity({ ...req });
@@ -62,56 +61,28 @@ export const RequestService = {
 
       return clonedRequest;
     });
-  },
+  }
 
-  async deleteSavedRequest(id: number) {
-    await requestRepo.deleteRequest(id);
-  },
+  public async deleteSavedRequest(id: number): Promise<void> {
+    await this.requestRepo.deleteRequest(id);
+  }
 
-  async updateRequest(request: RequestEntity) {
-    await requestRepo.updateRequest(request);
-  },
+  public async updateRequest(request: RequestEntity): Promise<void> {
+    await this.requestRepo.updateRequest(request);
+  }
 
-  parseAxiosHeaders(headers: any): Record<string, string> {
-    if (!headers) {
-      return {};
-    }
-
-    if (typeof headers.toJSON === 'function') {
-      return headers.toJSON();
-    }
-
-    const normalized: Record<string, string> = {};
-
-    for (const key in headers) {
-      if (Object.prototype.hasOwnProperty.call(headers, key)) {
-        const value = headers[key];
-
-        if (Array.isArray(value)) {
-          normalized[key] = value.join(', ');
-        } else if (typeof value === 'undefined') {
-          normalized[key] = '';
-        } else {
-          normalized[key] = String(value);
-        }
-      }
-    }
-
-    return normalized;
-  },
-
-  finalizeRequestWithResponse(request: RequestEntity, response: AxiosResponse) {
+  private finalizeRequestWithResponse(request: RequestEntity, response: AxiosResponse): RequestEntity {
     let responseData = response.data;
 
     if (request.encrypted) {
       responseData = encrypt(JSON.stringify(response.data));
     }
 
-    return {
+    return new RequestEntity({
       ...request,
       responseStatus: response.status,
       responseBody: responseData,
-      responseHeaders: response.headers as Record<any, any>
-    } as RequestEntity;
+      responseHeaders: response.headers as Record<string, any>,
+    });
   }
-};
+}
