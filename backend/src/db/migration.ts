@@ -1,3 +1,4 @@
+import logger from '../services/log-service.js';
 import { initializeDatabase } from './database.js';
 
 export const runMigrations = async (): Promise<void> => {
@@ -55,16 +56,16 @@ export const runMigrations = async (): Promise<void> => {
       migrations.forEach(({ name, query }, index) => {
         db.run(query, (err) => {
           if (err) {
-            console.error(`❌ Error creating "${name}" table:`, err.message);
+            logger.error(`❌ Error creating "${name}" table:`, err);
             hasError = true;
             reject(err);
             return;
           }
 
-          console.log(`✅ "${name}" table created.`);
+          logger.info(`✅ "${name}" table created.`);
 
           if (index === migrations.length - 1 && !hasError) {
-            console.log('✅ All migrations applied successfully.');
+            logger.info('✅ All migrations applied successfully.');
             resolve();
           }
         });

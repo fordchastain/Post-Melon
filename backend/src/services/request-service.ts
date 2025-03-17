@@ -2,6 +2,7 @@ import axios, { AxiosResponse, AxiosRequestHeaders } from 'axios';
 import { RequestEntity } from '../entities/request-entity.js';
 import { RequestRepository } from '../db/request-repository.js';
 import { encrypt, decrypt } from './encryption-service.js';
+import logger from './log-service.js';
 
 export class RequestService {
   private requestRepo = new RequestRepository();
@@ -33,7 +34,7 @@ export class RequestService {
         return this.finalizeRequestWithResponse(request, fallbackResponse);
       }
 
-      console.error('Unexpected error', (error as Error).message);
+      logger.error('Unexpected error', error as Error);
       throw new Error((error as Error).message);
     }
   }
@@ -48,8 +49,8 @@ export class RequestService {
     await this.requestRepo.saveRequest(clonedRequest);
   }
 
-  public async getSavedRequests(): Promise<RequestEntity[]> {
-    const requests = await this.requestRepo.getRequests();
+  public async getSavedRequests(limit: number, offset: number): Promise<RequestEntity[]> {
+    const requests = await this.requestRepo.getRequests(limit, offset);
 
     return requests.map((req) => {
       const clonedRequest = new RequestEntity({ ...req });
@@ -60,6 +61,15 @@ export class RequestService {
 
       return clonedRequest;
     });
+  }
+
+  public async getSavedRequestById(id: number): Promise<RequestEntity> {
+    const request = await this.requestRepo.getRequestById(id);
+    return RequestEntity.from(
+      request.encrypted
+        ? { ...request, body: decrypt(request.body) }
+        : request
+    );
   }
 
   public async deleteSavedRequest(id: number): Promise<void> {

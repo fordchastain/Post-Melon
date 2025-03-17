@@ -9,7 +9,7 @@
 **/.env
 
 # Ignore macOS system files
-.DS_Store
+**/*.DS_Store
 
 # Ignore build/output folders (optional, if you're building somewhere)
 **/dist/
@@ -17,3 +17,4 @@
 
 # Logs
 **/*.log
+**/logs/

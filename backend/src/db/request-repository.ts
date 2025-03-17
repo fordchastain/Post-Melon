@@ -1,5 +1,6 @@
 import { initializeDatabase } from './database.js';
 import { RequestEntity } from '../entities/request-entity.js';
+import logger from '../services/log-service.js';
 
 export class RequestRepository {
   private db = initializeDatabase();
@@ -10,10 +11,14 @@ export class RequestRepository {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  private GET_ALL_REQUESTS = `
+  private GET_REQUESTS = `
     SELECT * FROM request 
     ORDER BY created_at DESC
     LIMIT ? OFFSET ?
+  `;
+
+  private GET_REQUEST_BY_ID = `
+    SELECT * FROM request WHERE id = ?
   `;
 
   private DELETE_REQUEST = `
@@ -44,9 +49,10 @@ export class RequestRepository {
         ],
         function (err) {
           if (err) {
-            console.log(err);
+            logger.error(err.message, err);
             reject(err);
           } else {
+            logger.info('Succesfully saved request.')
             resolve();
           }
         },
@@ -54,11 +60,30 @@ export class RequestRepository {
     });
   }
 
-  getRequests(): Promise<RequestEntity[]> {
+  getRequests(limit: number, offset: number): Promise<RequestEntity[]> {
     return new Promise((resolve, reject) => {
-      this.db.all(this.GET_ALL_REQUESTS, (err, rows: any[]) => {
-        if (err) return reject(err);
-        resolve(rows.map(RequestEntity.from));
+      this.db.all(this.GET_REQUESTS, [limit, offset], (err, rows: any[]) => {
+        if (err) {
+          logger.error(err.message, err);
+          reject(err);
+        } else {
+          logger.info('Successfully fetched requests');
+          resolve(rows.map(RequestEntity.from));
+        }
+      });
+    });
+  }
+
+  getRequestById(id: number): Promise<RequestEntity> {
+    return new Promise((resolve, reject) => {
+      this.db.get(this.GET_REQUEST_BY_ID, [id], (err, rows: any[]) => {
+        if (err) {
+          logger.error(err.message, err);
+          reject(err);
+        } else {
+          logger.info("Succesfully fetched request");
+          resolve(RequestEntity.from(rows[0]));
+        }
       });
     });
   }
@@ -66,8 +91,13 @@ export class RequestRepository {
   deleteRequest(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
       this.db.run(this.DELETE_REQUEST, [id], function (err) {
-        if (err) reject(err);
-        else resolve();
+        if (err) {
+          logger.error(err.message, err);
+          reject(err);
+        } else {
+          logger.info('Succesfully deleted request');
+          resolve();
+        }
       });
     });
   }

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { RequestEntity } from '../entities/request-entity.js';
 import { RequestService } from '../services/request-service.js';
+import logger from '../services/log-service.js';
 
 export class RequestController {
   private readonly requestService: RequestService;
@@ -28,17 +29,20 @@ export class RequestController {
 
       response.status(201).json(executedRequest);
     } catch (error: any) {
-      console.error('Error executing API request:', error.message);
+      logger.error('Error executing API request:', error.message);
       response.status(500).json({ error: error.message });
     }
   }
 
-  public async getRequests(_request: Request, response: Response): Promise<void> {
+  public async getRequests(request: Request, response: Response): Promise<void> {
     try {
-      const savedRequests = await this.requestService.getSavedRequests();
+      const limit = parseInt(request.params.limit);
+      const offset = parseInt(request.params.offset);
+
+      const savedRequests = await this.requestService.getSavedRequests(limit, offset);
       response.status(200).json(savedRequests.map((req) => req.toJSON()));
     } catch (error: any) {
-      console.error('Error fetching requests:', error.message);
+      logger.error('Error fetching requests:', error.message);
       response.status(500).json({ error: error.message });
     }
   }
@@ -46,9 +50,7 @@ export class RequestController {
   public async getRequestById(request: Request, response: Response): Promise<Response<any, Record<string, any>>> {
     try {
       const requestId = parseInt(request.params.id);
-
-      const savedRequests = await this.requestService.getSavedRequests();
-      const savedRequest = savedRequests.find((r) => r.id === requestId);
+      const savedRequest = await this.requestService.getSavedRequestById(requestId);
 
       if (!savedRequest) {
         return response.status(404).json({ error: 'Request not found' });
@@ -56,7 +58,7 @@ export class RequestController {
 
       return response.status(200).json(savedRequest.toJSON());
     } catch (error: any) {
-      console.error('Error fetching request:', error.message);
+      logger.error('Error fetching request:', error.message);
       return response.status(500).json({ error: error.message });
     }
   }
@@ -69,7 +71,7 @@ export class RequestController {
 
       return response.status(200).json({ message: 'Request deleted successfully' });
     } catch (error: any) {
-      console.error('Error deleting request:', error.message);
+      logger.error('Error deleting request:', error.message);
       return response.status(500).json({ error: error.message });
     }
   }

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { runMigrations } from './db/migration.js';
 import { requestRoutes } from './routes/request-routes.js';
+import logger from './services/log-service.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,9 +14,9 @@ app.use('/api', requestRoutes);
 
 runMigrations()
   .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
   })
   .catch((err) => {
-    console.error('Server startup failed due to migration error:', err.message);
+    logger.error('Server startup failed due to migration error', err);
     process.exit(1);
   });

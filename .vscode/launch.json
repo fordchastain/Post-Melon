@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "name": "Launch Express API",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/backend/src/server.js", // <- entry point to your API
+      "program": "${workspaceFolder}/backend/src/server.js",
       "env": {
         "NODE_ENV": "development"
       }
