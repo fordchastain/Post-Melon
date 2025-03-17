@@ -38,24 +38,6 @@ export class RequestEntity {
     });
   }
 
-  toRow(): any {
-    return {
-      name: this.name,
-      method: this.method,
-      protocol: this.protocol,
-      url: this.url,
-      headers: this.headers,
-      body: this.body,
-      graphql_query: this.graphqlQuery,
-      websocket_event: this.websocketEvent,
-      grpc_method: this.grpcMethod,
-      encrypted: this.encrypted ? 1 : 0,
-      response_status: this.responseStatus,
-      response_body: this.responseBody,
-      created_at: this.createdAt.toISOString(),
-    };
-  }
-
   toJSON(): any {
     return {
       id: this.id,

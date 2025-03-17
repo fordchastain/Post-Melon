@@ -1,5 +1,4 @@
-import axios, { AxiosResponse, AxiosRequestHeaders, AxiosError, InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
-
+import axios, { AxiosResponse, AxiosRequestHeaders } from 'axios';
 import { RequestEntity } from '../entities/request-entity.js';
 import { RequestRepository } from '../db/request-repository.js';
 import { encrypt, decrypt } from './encryption-service.js';
@@ -65,10 +64,6 @@ export class RequestService {
 
   public async deleteSavedRequest(id: number): Promise<void> {
     await this.requestRepo.deleteRequest(id);
-  }
-
-  public async updateRequest(request: RequestEntity): Promise<void> {
-    await this.requestRepo.updateRequest(request);
   }
 
   private finalizeRequestWithResponse(request: RequestEntity, response: AxiosResponse): RequestEntity {

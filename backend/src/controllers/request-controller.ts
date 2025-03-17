@@ -7,11 +7,9 @@ export class RequestController {
 
   constructor() {
     this.requestService = new RequestService();
-
     this.createRequest = this.createRequest.bind(this);
     this.getRequests = this.getRequests.bind(this);
     this.getRequestById = this.getRequestById.bind(this);
-    this.updateRequest = this.updateRequest.bind(this);
     this.deleteRequest = this.deleteRequest.bind(this);
   }
 
@@ -59,24 +57,6 @@ export class RequestController {
       return response.status(200).json(savedRequest.toJSON());
     } catch (error: any) {
       console.error('Error fetching request:', error.message);
-      return response.status(500).json({ error: error.message });
-    }
-  }
-
-  public async updateRequest(request: Request, response: Response): Promise<Response<any, Record<string, any>>> {
-    try {
-      const requestId = parseInt(request.params.id);
-
-      const updatedRequestData = RequestEntity.from({
-        ...request.body,
-        id: requestId,
-      });
-
-      await this.requestService.updateRequest(updatedRequestData);
-
-      return response.status(200).json({ message: 'Request updated successfully' });
-    } catch (error: any) {
-      console.error('Error updating request:', error.message);
       return response.status(500).json({ error: error.message });
     }
   }

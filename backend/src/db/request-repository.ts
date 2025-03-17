@@ -11,31 +11,13 @@ export class RequestRepository {
   `;
 
   private GET_ALL_REQUESTS = `
-    SELECT * FROM request
+    SELECT * FROM request 
+    ORDER BY created_at DESC
+    LIMIT ? OFFSET ?
   `;
 
   private DELETE_REQUEST = `
     DELETE FROM request WHERE id = ?
-  `;
-
-  private UPDATE_REQUEST = `
-    UPDATE request
-    SET 
-      name = ?,
-      method = ?,
-      protocol = ?,
-      url = ?,
-      headers = ?,
-      body = ?,
-      graphql_query = ?,
-      websocket_event = ?,
-      grpc_method = ?,
-      encrypted = ?,
-      response_status = ?,
-      response_body = ?,
-      response_headers = ?,
-      created_at = ?
-    WHERE id = ?
   `;
 
   saveRequest(request: RequestEntity): Promise<void> {
@@ -76,7 +58,6 @@ export class RequestRepository {
     return new Promise((resolve, reject) => {
       this.db.all(this.GET_ALL_REQUESTS, (err, rows: any[]) => {
         if (err) return reject(err);
-
         resolve(rows.map(RequestEntity.from));
       });
     });
@@ -88,41 +69,6 @@ export class RequestRepository {
         if (err) reject(err);
         else resolve();
       });
-    });
-  }
-
-  updateRequest(request: RequestEntity): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (!request.id) {
-        return reject(new Error('RequestEntity must have an id to update.'));
-      }
-
-      this.db.run(
-        this.UPDATE_REQUEST,
-        [
-          request.name,
-          request.method,
-          request.protocol,
-          request.url,
-          JSON.stringify(request.headers),
-          request.body,
-          request.graphqlQuery ?? '',
-          request.websocketEvent ?? '',
-          request.grpcMethod ?? '',
-          request.encrypted ? 1 : 0,
-          request.responseStatus,
-          typeof request.responseBody === 'object'
-            ? JSON.stringify(request.responseBody)
-            : (request.responseBody ?? ''),
-          JSON.stringify(request.responseHeaders),
-          request.createdAt.toISOString(),
-          request.id,
-        ],
-        function (err) {
-          if (err) reject(err);
-          else resolve();
-        },
-      );
     });
   }
 }
