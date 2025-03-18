@@ -47,32 +47,33 @@ export class RequestController {
     }
   }
 
-  public async getRequestById(request: Request, response: Response): Promise<Response<any, Record<string, any>>> {
+  public async getRequestById(request: Request, response: Response): Promise<void> {
     try {
       const requestId = parseInt(request.params.id);
       const savedRequest = await this.requestService.getSavedRequestById(requestId);
 
       if (!savedRequest) {
-        return response.status(404).json({ error: 'Request not found' });
+        response.status(404).json({ error: 'Request not found' });
+        return;
       }
 
-      return response.status(200).json(savedRequest.toJSON());
+      response.status(200).json(savedRequest.toJSON());
     } catch (error: any) {
       logger.error('Error fetching request:', error.message);
-      return response.status(500).json({ error: error.message });
+      response.status(500).json({ error: error.message });
     }
   }
 
-  public async deleteRequest(request: Request, response: Response) {
+  public async deleteRequest(request: Request, response: Response): Promise<void> {
     try {
       const requestId = parseInt(request.params.id);
 
       await this.requestService.deleteSavedRequest(requestId);
 
-      return response.status(200).json({ message: 'Request deleted successfully' });
+      response.status(200).json({ message: 'Request deleted successfully' });
     } catch (error: any) {
       logger.error('Error deleting request:', error.message);
-      return response.status(500).json({ error: error.message });
+      response.status(500).json({ error: error.message });
     }
   }
 }

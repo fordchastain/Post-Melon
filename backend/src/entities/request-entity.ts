@@ -34,6 +34,7 @@ export class RequestEntity {
       encrypted: obj.encrypted === 1 || obj.encrypted === true,
       responseStatus: obj.response_status ?? obj.responseStatus,
       responseBody: obj.response_body ?? obj.responseBody,
+      responseHeaders: obj.response_headers ?? obj.response_headers,
       createdAt: obj.created_at ? new Date(obj.created_at) : (obj.createdAt ?? new Date()),
     });
   }
@@ -53,6 +54,7 @@ export class RequestEntity {
       encrypted: this.encrypted,
       responseStatus: this.responseStatus,
       responseBody: this.responseBody,
+      responseHeaders: this.responseHeaders,
       createdAt: this.createdAt.toISOString(),
     };
   }
