@@ -1,4 +1,4 @@
-export class RequestEntity {
+export class TemplateEntity {
   id?: number;
   name: string = '';
   method: string = 'GET';
@@ -10,18 +10,15 @@ export class RequestEntity {
   websocketEvent?: string;
   grpcMethod?: string;
   encrypted: boolean = false;
-  responseStatus: number = 0;
-  responseBody?: string | Record<string, string>;
-  responseHeaders: Record<string, string> = {};
   createdAt: Date = new Date();
-  templateId?: number;
+  updatedAt: Date = new Date();
 
-  constructor(params: Partial<RequestEntity> = {}) {
+  constructor(params: Partial<TemplateEntity>) {
     Object.assign(this, params);
   }
 
-  static from(obj: any): RequestEntity {
-    return new RequestEntity({
+  static from(obj: any): TemplateEntity {
+    return new TemplateEntity({
       id: obj.id,
       name: obj.name,
       method: obj.method,
@@ -33,10 +30,7 @@ export class RequestEntity {
       websocketEvent: obj.websocket_event ?? obj.websocketEvent,
       grpcMethod: obj.grpc_method ?? obj.grpcMethod,
       encrypted: obj.encrypted === 1 || obj.encrypted === true,
-      responseStatus: obj.response_status ?? 0,
-      responseBody: obj.response_body,
-      responseHeaders: obj.response_headers ?? {},
-      templateId: obj.template_id,
+      createdAt: obj.created_at ? new Date(obj.created_at) : (obj.createdAt ?? new Date()),
     });
   }
 
@@ -53,10 +47,7 @@ export class RequestEntity {
       websocketEvent: this.websocketEvent,
       grpcMethod: this.grpcMethod,
       encrypted: this.encrypted,
-      responseStatus: this.responseStatus,
-      responseBody: this.responseBody,
-      responseHeaders: this.responseHeaders,
-      templateId: this.templateId,
+      createdAt: this.createdAt.toISOString(),
     };
   }
 }

@@ -23,7 +23,8 @@ export const runMigrations = async (): Promise<void> => {
           response_status INTEGER,
           response_body TEXT,
           response_headers TEXT NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          template_id INTEGER
         )
       `,
     },

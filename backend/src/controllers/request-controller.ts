@@ -16,13 +16,13 @@ export class RequestController {
 
   public async createRequest(request: Request, response: Response): Promise<void> {
     try {
-      const requestData = RequestEntity.from({
+      const requestData = {
         ...request.body,
         headers: request.body.headers || {},
         protocol: request.body.protocol || 'HTTP',
         responseStatus: 0,
         createdAt: new Date(),
-      });
+      };
 
       const executedRequest = await this.requestService.executeApiRequest(requestData);
       await this.requestService.saveApiRequest(executedRequest);
@@ -36,8 +36,8 @@ export class RequestController {
 
   public async getRequests(request: Request, response: Response): Promise<void> {
     try {
-      const limit = parseInt(request.params.limit);
-      const offset = parseInt(request.params.offset);
+      const limit = parseInt(request.query.limit as string, 10) || 10;
+      const offset = parseInt(request.query.offset as string, 10) || 0; 
 
       const savedRequests = await this.requestService.getSavedRequests(limit, offset);
       response.status(200).json(savedRequests.map((req) => req.toJSON()));

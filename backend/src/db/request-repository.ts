@@ -62,13 +62,13 @@ export class RequestRepository {
 
   getRequests(limit: number, offset: number): Promise<RequestEntity[]> {
     return new Promise((resolve, reject) => {
-      this.db.all(this.GET_REQUESTS, [limit, offset], (err, rows: any[]) => {
+      this.db.all(this.GET_REQUESTS, [limit, offset], (err, rows: RequestEntity[]) => {
         if (err) {
           logger.error(err.message, err);
           reject(err);
         } else {
           logger.info('Successfully fetched requests');
-          resolve(rows.map(RequestEntity.from));
+          resolve(rows);
         }
       });
     });
@@ -76,14 +76,19 @@ export class RequestRepository {
 
   getRequestById(id: number): Promise<RequestEntity> {
     return new Promise((resolve, reject) => {
-      this.db.get(this.GET_REQUEST_BY_ID, [id], (err, rows: any[]) => {
+      this.db.get(this.GET_REQUEST_BY_ID, [id], (err, row: RequestEntity) => {
         if (err) {
-          logger.error(err.message, err);
-          reject(err);
-        } else {
-          logger.info("Succesfully fetched request");
-          resolve(RequestEntity.from(rows[0]));
+          logger.error("Database error:", err);
+          return reject(err);
         }
+  
+        if (!row) {
+          logger.warn(`No request found with id: ${id}`);
+          return reject(new Error(`Request with id ${id} not found`));
+        }
+  
+        logger.info(`Successfully fetched request with id ${id}`);
+        resolve(row);
       });
     });
   }
