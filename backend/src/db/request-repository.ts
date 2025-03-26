@@ -52,7 +52,7 @@ export class RequestRepository {
             logger.error(err.message, err);
             reject(err);
           } else {
-            logger.info('Succesfully saved request.')
+            logger.info('Succesfully saved request.');
             resolve();
           }
         },
@@ -78,15 +78,15 @@ export class RequestRepository {
     return new Promise((resolve, reject) => {
       this.db.get(this.GET_REQUEST_BY_ID, [id], (err, row: RequestEntity) => {
         if (err) {
-          logger.error("Database error:", err);
+          logger.error('Database error:', err);
           return reject(err);
         }
-  
+
         if (!row) {
           logger.warn(`No request found with id: ${id}`);
           return reject(new Error(`Request with id ${id} not found`));
         }
-  
+
         logger.info(`Successfully fetched request with id ${id}`);
         resolve(row);
       });

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { RequestEntity } from '../entities/request-entity.js';
 import { RequestService } from '../services/request-service.js';
 import logger from '../services/log-service.js';
 
@@ -37,7 +36,7 @@ export class RequestController {
   public async getRequests(request: Request, response: Response): Promise<void> {
     try {
       const limit = parseInt(request.query.limit as string, 10) || 10;
-      const offset = parseInt(request.query.offset as string, 10) || 0; 
+      const offset = parseInt(request.query.offset as string, 10) || 0;
 
       const savedRequests = await this.requestService.getSavedRequests(limit, offset);
       response.status(200).json(savedRequests.map((req) => req.toJSON()));

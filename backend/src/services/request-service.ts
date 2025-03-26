@@ -65,11 +65,7 @@ export class RequestService {
 
   public async getSavedRequestById(id: number): Promise<RequestEntity> {
     const request = await this.requestRepo.getRequestById(id);
-    return RequestEntity.from(
-      request.encrypted
-        ? { ...request, body: decrypt(request.body) }
-        : request
-    );
+    return RequestEntity.from(request.encrypted ? { ...request, body: decrypt(request.body) } : request);
   }
 
   public async deleteSavedRequest(id: number): Promise<void> {
