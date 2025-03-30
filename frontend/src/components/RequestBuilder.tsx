@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import { Box, Divider, Typography } from '@mui/material';
 import RequestEditor from './RequestEditor';
-import { HttpMethod, RequestTab } from '../types/request';
+import { HttpMethod, KeyValue, RequestTab } from '../types/request';
 import RequestTabs from './RequestTabs';
+import KeyValueEditor from './shared/KeyValueEditor';
 
 const RequestBuilder: React.FC = () => {
   const [requestMethod, setRequestMethod] = useState<HttpMethod>('GET');
   const [requestUrl, setRequestUrl] = useState('');
   const [activeTab, setActiveTab] = useState<RequestTab>('params');
+  const [queryParams, setQueryParams] = useState<KeyValue[]>([
+    { key: '', value: '' },
+  ]);
 
   const handleSendRequest = () => {};
+
+  const tabComponents: Record<RequestTab, React.ReactNode> = {
+    params: <KeyValueEditor items={queryParams} updateItems={setQueryParams} />,
+    headers: <></>,
+    body: <></>,
+    response: <></>,
+  };
 
   return (
     <Box display="flex" flexDirection="column" gap={2} p={2}>
@@ -21,12 +32,12 @@ const RequestBuilder: React.FC = () => {
         gap={1}
         sx={{ marginBottom: -1 }}
       >
+        Post Melon
         <img
           src="/post-melon-logo.png"
           alt="Post Melon logo"
           style={{ height: '40px' }}
         />
-        Post Melon
       </Typography>
       <Divider />
       <RequestEditor
@@ -38,6 +49,7 @@ const RequestBuilder: React.FC = () => {
       />
       <RequestTabs activeTab={activeTab} setActiveTab={setActiveTab} />
       <Divider sx={{ marginTop: -2 }} />
+      {tabComponents[activeTab]}
     </Box>
   );
 };

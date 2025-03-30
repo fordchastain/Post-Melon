@@ -15,7 +15,6 @@ const RequestTabs: React.FC<RequestTabsProps> = ({
     <Tab label="Params" value="params" />
     <Tab label="Headers" value="headers" />
     <Tab label="Body" value="body" />
-    <Tab label="Auth" value="auth" />
     <Tab label="Response" value="response" />
   </Tabs>
 );

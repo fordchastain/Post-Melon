@@ -29,6 +29,9 @@ const RequestEditor: React.FC<RequestEditorProps> = ({
         fontWeight: 'bold',
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,
+        '& .MuiSelect-select': {
+          textAlign: 'center',
+        },
       }}
       size="medium"
     >
@@ -56,6 +59,7 @@ const RequestEditor: React.FC<RequestEditorProps> = ({
       variant="contained"
       color="primary"
       sx={{
+        minWidth: 90,
         borderTopLeftRadius: 0,
         borderBottomLeftRadius: 0,
         paddingX: 3,
