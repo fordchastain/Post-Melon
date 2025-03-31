@@ -9,35 +9,23 @@ const RequestBuilder: React.FC = () => {
   const [requestMethod, setRequestMethod] = useState<HttpMethod>('GET');
   const [requestUrl, setRequestUrl] = useState('');
   const [activeTab, setActiveTab] = useState<RequestTab>('params');
-  const [queryParams, setQueryParams] = useState<KeyValue[]>([
-    { key: '', value: '' },
-  ]);
+  const [queryParams, setQueryParams] = useState<KeyValue[]>([{ key: '', value: '' }]);
+  const [headers, setHeaders] = useState<KeyValue[]>([{ key: '', value: '' }]);
 
   const handleSendRequest = () => {};
 
   const tabComponents: Record<RequestTab, React.ReactNode> = {
     params: <KeyValueEditor items={queryParams} updateItems={setQueryParams} />,
-    headers: <></>,
+    headers: <KeyValueEditor items={headers} updateItems={setHeaders} />,
     body: <></>,
     response: <></>,
   };
 
   return (
     <Box display="flex" flexDirection="column" gap={2} p={2}>
-      <Typography
-        variant="h5"
-        fontWeight="bold"
-        display="flex"
-        alignItems="center"
-        gap={1}
-        sx={{ marginBottom: -1 }}
-      >
+      <Typography variant="h5" fontWeight="bold" display="flex" alignItems="center" gap={1} sx={{ marginBottom: -1 }}>
         Post Melon
-        <img
-          src="/post-melon-logo.png"
-          alt="Post Melon logo"
-          style={{ height: '40px' }}
-        />
+        <img src="/post-melon-logo-lighter.png" alt="Post Melon logo" style={{ height: '40px' }} />
       </Typography>
       <Divider />
       <RequestEditor

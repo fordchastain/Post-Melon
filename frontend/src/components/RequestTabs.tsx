@@ -7,10 +7,7 @@ type RequestTabsProps = {
   setActiveTab: (tab: RequestTab) => void;
 };
 
-const RequestTabs: React.FC<RequestTabsProps> = ({
-  activeTab,
-  setActiveTab,
-}) => (
+const RequestTabs: React.FC<RequestTabsProps> = ({ activeTab, setActiveTab }) => (
   <Tabs value={activeTab} onChange={(_e, newValue) => setActiveTab(newValue)}>
     <Tab label="Params" value="params" />
     <Tab label="Headers" value="headers" />

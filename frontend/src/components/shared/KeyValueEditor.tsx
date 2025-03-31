@@ -1,11 +1,4 @@
-import {
-  Stack,
-  Box,
-  TextField,
-  IconButton,
-  Button,
-  Typography,
-} from '@mui/material';
+import { Stack, Box, TextField, IconButton, Button, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React from 'react';
 import { KeyValue } from '../../types/request';
@@ -15,15 +8,8 @@ type KeyValueEditorProps = {
   updateItems: (newItems: KeyValue[]) => void;
 };
 
-const KeyValueEditor: React.FC<KeyValueEditorProps> = ({
-  items,
-  updateItems,
-}) => {
-  const handleChange = (
-    index: number,
-    field: 'key' | 'value',
-    value: string
-  ) => {
+const KeyValueEditor: React.FC<KeyValueEditorProps> = ({ items, updateItems }) => {
+  const handleChange = (index: number, field: 'key' | 'value', value: string) => {
     const updated = [...items];
     updated[index] = { ...updated[index], [field]: value };
     updateItems(updated);
