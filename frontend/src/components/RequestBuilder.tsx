@@ -4,6 +4,8 @@ import RequestEditor from './RequestEditor';
 import { HttpMethod, KeyValue, RequestTab } from '../types/request';
 import RequestTabs from './RequestTabs';
 import KeyValueEditor from './shared/KeyValueEditor';
+import JsonEditor from './shared/JsonEditor';
+import { createRequest } from '../services/requestServices';
 
 const RequestBuilder: React.FC = () => {
   const [requestMethod, setRequestMethod] = useState<HttpMethod>('GET');
@@ -11,21 +13,36 @@ const RequestBuilder: React.FC = () => {
   const [activeTab, setActiveTab] = useState<RequestTab>('params');
   const [queryParams, setQueryParams] = useState<KeyValue[]>([{ key: '', value: '' }]);
   const [headers, setHeaders] = useState<KeyValue[]>([{ key: '', value: '' }]);
+  const [body, setBody] = useState<string>('{\n  \n}');
+  const [response, setResponse] = useState<string>('');
 
-  const handleSendRequest = () => {};
+  const handleSendRequest = async () => {
+    try {
+      console.log(body);
+      const createdRequest = await createRequest({
+        method: requestMethod,
+        body: body,
+        headers: headers,
+        url: requestUrl,
+      });
+      setResponse(JSON.stringify(createdRequest.responseBody, null, 2));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const tabComponents: Record<RequestTab, React.ReactNode> = {
     params: <KeyValueEditor items={queryParams} updateItems={setQueryParams} />,
     headers: <KeyValueEditor items={headers} updateItems={setHeaders} />,
-    body: <></>,
-    response: <></>,
+    body: <JsonEditor json={body} updateJson={setBody} />,
+    response: response.length === 0 ? <></> : <JsonEditor json={response} updateJson={setResponse} readonly={true} />,
   };
 
   return (
     <Box display="flex" flexDirection="column" gap={2} p={2}>
       <Typography variant="h5" fontWeight="bold" display="flex" alignItems="center" gap={1} sx={{ marginBottom: -1 }}>
-        Post Melon
-        <img src="/post-melon-logo-lighter.png" alt="Post Melon logo" style={{ height: '40px' }} />
+        <img src="/post-melon-text.png" alt="Post Melon text" style={{ height: '70px' }} />
+        <img src="/post-melon-logo.png" alt="Post Melon logo" style={{ height: '50px', marginLeft: '-20px' }} />
       </Typography>
       <Divider />
       <RequestEditor

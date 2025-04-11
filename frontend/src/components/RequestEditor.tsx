@@ -71,6 +71,7 @@ const RequestEditor: React.FC<RequestEditorProps> = ({
         },
       }}
       size="medium"
+      onClick={onSend}
     >
       Send
     </Button>
