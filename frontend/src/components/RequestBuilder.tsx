@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import RequestEditor from './RequestEditor';
-import { HttpMethod, KeyValue, RequestTab } from '../types/request';
+import { HttpMethod, KeyValue, Request, RequestTab } from '../types/request';
 import RequestTabs from './RequestTabs';
 import KeyValueEditor from './shared/KeyValueEditor';
 import JsonEditor from './shared/JsonEditor';
-import { createRequest } from '../services/requestServices';
+import { createRequest, getRequests } from '../services/requestServices';
 import { buildUrlWithQueryParameters, createObjectFromKeyValueArray } from '../utils/requestUtils';
 import HistorySidebar from './HistorySidebar';
 
@@ -45,6 +45,7 @@ const MainPanel = styled('div')({
 });
 
 const TabContent = styled('div')({
+  paddingTop: 16,
   flex: 1,
   overflow: 'auto',
 });
@@ -57,10 +58,22 @@ const RequestBuilder: React.FC = () => {
   const [headers, setHeaders] = useState<KeyValue[]>([{ key: '', value: '' }]);
   const [body, setBody] = useState<string>('{\n  \n}');
   const [response, setResponse] = useState<string>('');
+  const [requestHistory, setRequestHistory] = useState<Request[]>([]);
+  const [offset, setOffset] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+
+  const refetchRequests = () => {
+    getRequests(10, offset).then((x) => {
+      setRequestHistory(x.requests);
+      setTotalCount(x.totalCount);
+    });
+  };
+
+  useEffect(refetchRequests, [offset, response]);
 
   const handleSendRequest = async () => {
     try {
-      console.log(body);
       const createdRequest = await createRequest({
         method: requestMethod,
         body: body,
@@ -72,6 +85,11 @@ const RequestBuilder: React.FC = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    setOffset((newPage - 1) * 10);
   };
 
   const tabComponents: Record<RequestTab, React.ReactNode> = {
@@ -91,7 +109,12 @@ const RequestBuilder: React.FC = () => {
       </Header>
       <Content>
         <SidebarContainer>
-          <HistorySidebar />
+          <HistorySidebar
+            requestHistory={requestHistory}
+            totalCount={totalCount}
+            page={page}
+            handlePageChange={handlePageChange}
+          />
         </SidebarContainer>
         <MainPanel>
           <RequestEditor
@@ -102,7 +125,7 @@ const RequestBuilder: React.FC = () => {
             onSend={handleSendRequest}
           />
           <RequestTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-          <Divider sx={{ my: 2 }} />
+          <Divider />
           <TabContent>{tabComponents[activeTab]}</TabContent>
         </MainPanel>
       </Content>

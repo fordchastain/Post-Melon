@@ -25,6 +25,11 @@ export class RequestRepository {
     DELETE FROM request WHERE id = ?
   `;
 
+  private GET_REQUESTS_COUNT = `
+    SELECT COUNT(*) as total_count
+    FROM request
+  `;
+
   saveRequest(request: RequestEntity): Promise<void> {
     return new Promise((resolve, reject) => {
       this.db.run(
@@ -62,13 +67,13 @@ export class RequestRepository {
 
   getRequests(limit: number, offset: number): Promise<RequestEntity[]> {
     return new Promise((resolve, reject) => {
-      this.db.all(this.GET_REQUESTS, [limit, offset], (err, rows: RequestEntity[]) => {
+      this.db.all(this.GET_REQUESTS, [limit, offset], (err, rows: any[]) => {
         if (err) {
           logger.error(err.message, err);
           reject(err);
         } else {
           logger.info('Successfully fetched requests');
-          resolve(rows);
+          resolve(rows.map((x) => RequestEntity.from(x)));
         }
       });
     });
@@ -102,6 +107,20 @@ export class RequestRepository {
         } else {
           logger.info('Succesfully deleted request');
           resolve();
+        }
+      });
+    });
+  }
+
+  getRequestCount(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.db.get(this.GET_REQUESTS_COUNT, (err, row: { total_count: number }) => {
+        if (err) {
+          logger.error('Error fetching request count:', err);
+          reject(err);
+        } else {
+          logger.info('Successfully fetched request count');
+          resolve(row.total_count);
         }
       });
     });

@@ -39,7 +39,8 @@ export class RequestController {
       const offset = parseInt(request.query.offset as string, 10) || 0;
 
       const savedRequests = await this.requestService.getSavedRequests(limit, offset);
-      response.status(200).json(savedRequests.map((req) => req.toJSON()));
+      const totalCount = await this.requestService.getRequestsCount();
+      response.status(200).json({ requests: savedRequests.map((req) => req), totalCount: totalCount });
     } catch (error: any) {
       logger.error('Error fetching requests:', error.message);
       response.status(500).json({ error: error.message });
@@ -56,7 +57,7 @@ export class RequestController {
         return;
       }
 
-      response.status(200).json(savedRequest.toJSON());
+      response.status(200).json(savedRequest);
     } catch (error: any) {
       logger.error('Error fetching request:', error.message);
       response.status(500).json({ error: error.message });

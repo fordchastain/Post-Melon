@@ -22,3 +22,8 @@ export type Request = {
   createdAt: Date;
   templateId?: number;
 };
+
+export type RequestApiResponse = {
+  requests: Request[];
+  totalCount: number;
+};

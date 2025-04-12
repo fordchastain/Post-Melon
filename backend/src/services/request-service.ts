@@ -72,6 +72,10 @@ export class RequestService {
     await this.requestRepo.deleteRequest(id);
   }
 
+  public async getRequestsCount(): Promise<number> {
+    return await this.requestRepo.getRequestCount();
+  }
+
   private finalizeRequestWithResponse(request: RequestEntity, response: AxiosResponse): RequestEntity {
     let responseData = response.data;
 

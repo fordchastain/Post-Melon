@@ -1,10 +1,9 @@
-import { Box, List, ListItemButton, styled, Typography } from '@mui/material';
+import { Box, List, ListItemButton, Pagination, styled, TablePagination, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useEffect, useState } from 'react';
-import { HttpMethod, Request } from '../types/request';
+import { Request } from '../types/request';
 import { getRequests } from '../services/requestServices';
 import { getUrlPath } from '../utils/requestUtils';
-import GetAppIcon from '@mui/icons-material/Download';
 
 const SidebarContainer = styled('div')({
   width: 200,
@@ -12,27 +11,14 @@ const SidebarContainer = styled('div')({
   flexDirection: 'column',
 });
 
-const LIMIT = 10;
+interface HistorySidebarProps {
+  requestHistory: Request[];
+  totalCount: number;
+  page: number;
+  handlePageChange: (page: number) => void;
+}
 
-const HistorySidebar: React.FC = () => {
-  const [requestHistory, setRequestHistory] = useState<Request[]>([]);
-  const [offset, setOffset] = useState<number>(0);
-
-  const methodIconMap: Record<HttpMethod, any> = {
-    GET: <GetAppIcon color="primary" />,
-    POST: <GetAppIcon color="success" />,
-    PUT: <GetAppIcon color="warning" />,
-    PATCH: <GetAppIcon color="info" />,
-    DELETE: <GetAppIcon color="error" />,
-  };
-
-  useEffect(() => {
-    getRequests(LIMIT, offset).then((x) => {
-      console.log(x);
-      setRequestHistory(x);
-    });
-  }, [offset]);
-
+const HistorySidebar: React.FC<HistorySidebarProps> = ({ requestHistory, totalCount, page, handlePageChange }) => {
   return (
     <SidebarContainer>
       <Box p={2}>
@@ -63,6 +49,14 @@ const HistorySidebar: React.FC = () => {
           ))}
         </List>
       </Box>
+      <Pagination
+        color="primary"
+        count={Math.ceil(totalCount / 10)}
+        siblingCount={0}
+        boundaryCount={0}
+        page={page}
+        onChange={(_, newPage) => handlePageChange(newPage)}
+      />
     </SidebarContainer>
   );
 };

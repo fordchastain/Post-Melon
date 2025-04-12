@@ -39,24 +39,4 @@ export class RequestEntity {
       templateId: obj.template_id,
     });
   }
-
-  toJSON(): any {
-    return {
-      id: this.id,
-      name: this.name,
-      method: this.method,
-      protocol: this.protocol,
-      url: this.url,
-      headers: this.headers,
-      body: this.body,
-      graphqlQuery: this.graphqlQuery,
-      websocketEvent: this.websocketEvent,
-      grpcMethod: this.grpcMethod,
-      encrypted: this.encrypted,
-      responseStatus: this.responseStatus,
-      responseBody: this.responseBody,
-      responseHeaders: this.responseHeaders,
-      templateId: this.templateId,
-    };
-  }
 }

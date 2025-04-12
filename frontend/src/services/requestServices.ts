@@ -1,4 +1,4 @@
-import { Request } from '../types/request';
+import { Request, RequestApiResponse } from '../types/request';
 
 const BASE_URL = 'http://localhost:3001/api/requests';
 
@@ -20,7 +20,7 @@ export const getRequests = async (limit: number, offset: number) => {
 
   const response = await fetch(url);
   if (!response.ok) throw new Error('Failed to fetch requests');
-  return response.json() as Promise<Request[]>;
+  return response.json() as Promise<RequestApiResponse>;
 };
 
 export const getRequest = async (id: number) => {
