@@ -10,7 +10,7 @@ const MainSection = styled('div')({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  padding: '1rem',
+  width: '100%',
 });
 
 function App() {

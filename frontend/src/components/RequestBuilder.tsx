@@ -6,6 +6,7 @@ import RequestTabs from './RequestTabs';
 import KeyValueEditor from './shared/KeyValueEditor';
 import JsonEditor from './shared/JsonEditor';
 import { createRequest } from '../services/requestServices';
+import { buildUrlWithQueryParameters, createObjectFromKeyValueArray } from '../utils/requestUtils';
 
 const RequestBuilder: React.FC = () => {
   const [requestMethod, setRequestMethod] = useState<HttpMethod>('GET');
@@ -22,10 +23,11 @@ const RequestBuilder: React.FC = () => {
       const createdRequest = await createRequest({
         method: requestMethod,
         body: body,
-        headers: headers,
-        url: requestUrl,
+        headers: createObjectFromKeyValueArray(headers),
+        url: buildUrlWithQueryParameters(requestUrl, queryParams),
       });
       setResponse(JSON.stringify(createdRequest.responseBody, null, 2));
+      setActiveTab('response');
     } catch (error) {
       console.log(error);
     }
