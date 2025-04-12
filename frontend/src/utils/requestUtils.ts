@@ -5,7 +5,12 @@ export const createObjectFromKeyValueArray = (keyValueArray: KeyValue[]) => {
 };
 
 export const buildUrlWithQueryParameters = (baseUrl: string, queryParams: KeyValue[]) => {
-  let url = (baseUrl += baseUrl.includes('?') ? '&' : '?');
-  queryParams.forEach((x) => (url += x.key !== '' ? `${x.key}=${x.value}&` : ''));
-  return url.replace(/&$/, '');
+  const url = new URL(baseUrl);
+  queryParams.forEach((x) => url.searchParams.set(x.key, x.value));
+  return url.toString();
+};
+
+export const getUrlPath = (url: string) => {
+  const urlObject = new URL(url);
+  return urlObject.pathname + urlObject.search;
 };

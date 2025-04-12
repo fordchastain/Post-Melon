@@ -1,3 +1,5 @@
+import { Request } from '../types/request';
+
 const BASE_URL = 'http://localhost:3001/api/requests';
 
 export const createRequest = async (body: any) => {
@@ -11,10 +13,14 @@ export const createRequest = async (body: any) => {
   return res.json();
 };
 
-export const getRequests = async () => {
-  const response = await fetch(BASE_URL);
+export const getRequests = async (limit: number, offset: number) => {
+  const url = new URL(BASE_URL);
+  url.searchParams.set('limit', limit.toString());
+  url.searchParams.set('offset', offset.toString());
+
+  const response = await fetch(url);
   if (!response.ok) throw new Error('Failed to fetch requests');
-  return response.json();
+  return response.json() as Promise<Request[]>;
 };
 
 export const getRequest = async (id: number) => {

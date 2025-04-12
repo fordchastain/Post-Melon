@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Divider, Typography } from '@mui/material';
+import { Divider } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import RequestEditor from './RequestEditor';
 import { HttpMethod, KeyValue, RequestTab } from '../types/request';
 import RequestTabs from './RequestTabs';
@@ -7,6 +8,46 @@ import KeyValueEditor from './shared/KeyValueEditor';
 import JsonEditor from './shared/JsonEditor';
 import { createRequest } from '../services/requestServices';
 import { buildUrlWithQueryParameters, createObjectFromKeyValueArray } from '../utils/requestUtils';
+import HistorySidebar from './HistorySidebar';
+
+const RootContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100vh',
+  width: '100%',
+});
+
+const Header = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  padding: '16px 24px',
+  borderBottom: '1px solid #e0e0e0',
+});
+
+const Content = styled('div')({
+  display: 'flex',
+  flex: 1,
+  overflow: 'hidden',
+});
+
+const SidebarContainer = styled('div')({
+  width: 200,
+  padding: 8,
+});
+
+const MainPanel = styled('div')({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  padding: 24,
+  overflow: 'hidden',
+});
+
+const TabContent = styled('div')({
+  flex: 1,
+  overflow: 'auto',
+});
 
 const RequestBuilder: React.FC = () => {
   const [requestMethod, setRequestMethod] = useState<HttpMethod>('GET');
@@ -41,23 +82,31 @@ const RequestBuilder: React.FC = () => {
   };
 
   return (
-    <Box display="flex" flexDirection="column" gap={2} p={2}>
-      <Typography variant="h5" fontWeight="bold" display="flex" alignItems="center" gap={1} sx={{ marginBottom: -1 }}>
-        <img src="/post-melon-text.png" alt="Post Melon text" style={{ height: '70px' }} />
-        <img src="/post-melon-logo.png" alt="Post Melon logo" style={{ height: '50px', marginLeft: '-20px' }} />
-      </Typography>
-      <Divider />
-      <RequestEditor
-        requestMethod={requestMethod}
-        setRequestMethod={setRequestMethod}
-        requestUrl={requestUrl}
-        setRequestUrl={setRequestUrl}
-        onSend={handleSendRequest}
-      />
-      <RequestTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Divider sx={{ marginTop: -2 }} />
-      {tabComponents[activeTab]}
-    </Box>
+    <RootContainer>
+      <Header>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <img src="/post-melon-text.png" alt="Post Melon text" style={{ height: '60px' }} />
+          <img src="/post-melon-logo.png" alt="Post Melon logo" style={{ height: '50px', marginLeft: '-20px' }} />
+        </div>
+      </Header>
+      <Content>
+        <SidebarContainer>
+          <HistorySidebar />
+        </SidebarContainer>
+        <MainPanel>
+          <RequestEditor
+            requestMethod={requestMethod}
+            setRequestMethod={setRequestMethod}
+            requestUrl={requestUrl}
+            setRequestUrl={setRequestUrl}
+            onSend={handleSendRequest}
+          />
+          <RequestTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+          <Divider sx={{ my: 2 }} />
+          <TabContent>{tabComponents[activeTab]}</TabContent>
+        </MainPanel>
+      </Content>
+    </RootContainer>
   );
 };
 
