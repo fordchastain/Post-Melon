@@ -1,5 +1,12 @@
 ## Post Melon 🍉
 
+![MIT License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![Last Commit](https://img.shields.io/github/last-commit/fordchastain/post-melon)
+![Made with React](https://img.shields.io/badge/frontend-React-61DAFB?logo=react)
+![Backend](https://img.shields.io/badge/backend-Express.js-000000?logo=express)
+![TypeScript](https://img.shields.io/badge/language-TypeScript-3178C6?logo=typescript)
+
 A lightweight, minimal, fully local, open-source API testing tool that runs entirely on your device and never stores data on any server. Your API request history, environments, and configurations stay local — giving you complete control over your data.
 
 As more tools move to the cloud and lock features behind accounts and subscriptions, Post Melon brings things back to basics: core functionality, full privacy, and zero vendor lock-in.

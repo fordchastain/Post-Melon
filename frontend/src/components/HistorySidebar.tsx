@@ -1,4 +1,4 @@
-import { Box, List, ListItemButton, Pagination, styled, TablePagination, Tooltip, Typography } from '@mui/material';
+import { Box, List, ListItemButton, Pagination, styled, Tooltip, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { Request } from '../types/request';
 import { getUrlPath } from '../utils/requestUtils';
