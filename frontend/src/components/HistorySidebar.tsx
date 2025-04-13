@@ -1,8 +1,6 @@
 import { Box, List, ListItemButton, Pagination, styled, TablePagination, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { useEffect, useState } from 'react';
 import { Request } from '../types/request';
-import { getRequests } from '../services/requestServices';
 import { getUrlPath } from '../utils/requestUtils';
 
 const SidebarContainer = styled('div')({

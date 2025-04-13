@@ -1,4 +1,4 @@
-import { Request, RequestApiResponse } from '../types/request';
+import { RequestApiResponse } from '../types/request';
 
 const BASE_URL = 'http://localhost:3001/api/requests';
 

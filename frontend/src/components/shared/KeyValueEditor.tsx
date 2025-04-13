@@ -13,11 +13,6 @@ const KeyValueEditor: React.FC<KeyValueEditorProps> = ({ items, updateItems }) =
     const updated = [...items];
     updated[index] = { ...updated[index], [field]: value };
     updateItems(updated);
-
-    //const last = updated[updated.length - 1];
-    //if (last.key !== '' || last.value !== '') {
-    //  updateItems([...updated, { key: '', value: '' }]);
-    //}
   };
 
   const handleRemove = (index: number) => {
