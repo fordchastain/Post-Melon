@@ -1,7 +1,6 @@
 import axios, { AxiosResponse, AxiosRequestHeaders } from 'axios';
 import { RequestEntity } from '../entities/request-entity.js';
 import { RequestRepository } from '../db/request-repository.js';
-import { encrypt, decrypt } from './encryption-service.js';
 import logger from './log-service.js';
 
 export class RequestService {
@@ -40,13 +39,7 @@ export class RequestService {
   }
 
   public async saveApiRequest(request: RequestEntity): Promise<void> {
-    const clonedRequest = new RequestEntity({ ...request });
-
-    if (clonedRequest.encrypted) {
-      clonedRequest.body = encrypt(clonedRequest.body);
-    }
-
-    await this.requestRepo.saveRequest(clonedRequest);
+    await this.requestRepo.saveRequest(request);
   }
 
   public async getSavedRequests(limit: number, offset: number): Promise<RequestEntity[]> {
@@ -54,18 +47,12 @@ export class RequestService {
 
     return requests.map((req) => {
       const clonedRequest = new RequestEntity({ ...req });
-
-      if (clonedRequest.encrypted) {
-        clonedRequest.body = decrypt(clonedRequest.body);
-      }
-
       return clonedRequest;
     });
   }
 
   public async getSavedRequestById(id: number): Promise<RequestEntity> {
-    const request = await this.requestRepo.getRequestById(id);
-    return RequestEntity.from(request.encrypted ? { ...request, body: decrypt(request.body) } : request);
+    return await this.requestRepo.getRequestById(id);
   }
 
   public async deleteSavedRequest(id: number): Promise<void> {
@@ -77,11 +64,7 @@ export class RequestService {
   }
 
   private finalizeRequestWithResponse(request: RequestEntity, response: AxiosResponse): RequestEntity {
-    let responseData = response.data;
-
-    if (request.encrypted) {
-      responseData = encrypt(JSON.stringify(response.data));
-    }
+    const responseData = response.data;
 
     return new RequestEntity({
       ...request,
