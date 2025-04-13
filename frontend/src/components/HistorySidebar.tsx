@@ -1,4 +1,4 @@
-import { Box, List, ListItemButton, Pagination, styled, TablePagination, Typography } from '@mui/material';
+import { Box, List, ListItemButton, Pagination, styled, TablePagination, Tooltip, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { Request } from '../types/request';
 import { getUrlPath } from '../utils/requestUtils';
@@ -26,24 +26,26 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ requestHistory, totalCo
         </Typography>
         <List dense>
           {requestHistory.map((x, index) => (
-            <ListItemButton key={index}>
-              <Typography
-                variant="body2"
-                fontWeight="bold"
-                color="text.secondary"
-                noWrap
-                sx={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  width: '100%',
-                  textAlign: 'left',
-                  marginLeft: '4px',
-                }}
-              >
-                {`${x.method} ${getUrlPath(x.url.toString())}`}
-              </Typography>
-            </ListItemButton>
+            <Tooltip title={x.url}>
+              <ListItemButton key={index}>
+                <Typography
+                  variant="body2"
+                  fontWeight="bold"
+                  color="text.secondary"
+                  noWrap
+                  sx={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    width: '100%',
+                    textAlign: 'left',
+                    marginLeft: '4px',
+                  }}
+                >
+                  {`${x.method} ${getUrlPath(x.url.toString())}`}
+                </Typography>
+              </ListItemButton>
+            </Tooltip>
           ))}
         </List>
       </Box>
